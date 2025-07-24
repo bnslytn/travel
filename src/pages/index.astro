@@ -3,6 +3,12 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+
+// Get the latest blog posts for the featured section
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+).slice(0, 3);
 ---
 
 <!doctype html>
@@ -13,38 +19,430 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
+			<!-- Hero Section -->
+			<section class="hero">
+				<div class="hero-content">
+					<h1>Your Insider's Guide to Florida's East Coast</h1>
+					<p class="hero-subtitle">
+						Discover hidden gems, authentic local spots, and must-see attractions from New Smyrna Beach to St. Augustine. 
+						Written by locals who actually live here.
+					</p>
+					<div class="hero-cta">
+						<a href="/blog" class="btn-primary">Explore Destinations</a>
+						<a href="/about" class="btn-secondary">About Our Local Team</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Content Container -->
+			<div class="content-container">
+
+			<!-- Featured Destinations -->
+			<section class="featured-destinations">
+				<h2>Popular East Coast Destinations</h2>
+				<div class="destination-grid">
+					<div class="destination-card">
+						<h3>New Smyrna Beach</h3>
+						<p>Discover the "World's Safest Beach" and its charming downtown arts district.</p>
+						<a href="/destinations/new-smyrna-beach">Explore NSB →</a>
+					</div>
+					<div class="destination-card">
+						<h3>St. Augustine</h3>
+						<p>America's oldest city with authentic local spots beyond the tourist trail.</p>
+						<a href="/destinations/st-augustine">Discover St. Augustine →</a>
+					</div>
+					<div class="destination-card">
+						<h3>Space Coast</h3>
+						<p>Cocoa Beach, rocket launches, and pristine beaches away from the crowds.</p>
+						<a href="/destinations/space-coast">Visit Space Coast →</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Latest Content -->
+			{posts.length > 0 && (
+				<section class="latest-content">
+					<h2>Latest Local Discoveries</h2>
+					<div class="content-grid">
+						{posts.map((post) => (
+							<article class="content-card">
+								<h3>
+									<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+								</h3>
+								<p class="content-date">
+									{post.data.pubDate.toLocaleDateString('en-us', {
+										year: 'numeric',
+										month: 'short',
+										day: 'numeric',
+									})}
+								</p>
+								<p>{post.data.description}</p>
+								<a href={`/blog/${post.slug}/`} class="read-more">Read More →</a>
+							</article>
+						))}
+					</div>
+					<div class="view-all">
+						<a href="/blog" class="btn-secondary">View All Posts</a>
+					</div>
+				</section>
+			)}
+
+			<!-- Why Trust Us -->
+			<section class="trust-section">
+				<h2>Why Trust Florida Escape Guide?</h2>
+				<div class="trust-grid">
+					<div class="trust-item">
+						<h3>🏠 Local Residents</h3>
+						<p>We actually live on Florida's East Coast and visit these places regularly with friends and family.</p>
+					</div>
+					<div class="trust-item">
+						<h3>📸 Real Experiences</h3>
+						<p>Every recommendation comes from personal visits with honest reviews and photos from actual trips.</p>
+					</div>
+					<div class="trust-item">
+						<h3>💯 No PR Fluff</h3>
+						<p>We tell you what's actually worth your time and money, not what tourism boards want you to hear.</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Newsletter Signup -->
+			<section class="newsletter">
+				<div class="newsletter-content">
+					<h2>Get Local Insider Tips</h2>
+					<p>Weekly discoveries, hidden gems, and practical tips delivered to your inbox.</p>
+					<form class="newsletter-form">
+						<input type="email" placeholder="Enter your email" required>
+						<button type="submit" class="btn-primary">Subscribe</button>
+					</form>
+					<p class="newsletter-note">No spam, just authentic local discoveries. Unsubscribe anytime.</p>
+					</div>
+					</section>
+
+					 </div> <!-- End Content Container -->
+	</main>
+	<Footer />
 	</body>
 </html>
+
+<style>
+	/* Hero Section */
+	.hero {
+		background: linear-gradient(135deg, #FF7A59 0%, #FF6B9D 50%, #4ECDC4 100%);
+		color: white;
+		text-align: center;
+		padding: 4rem 1rem;
+		margin: 0;
+	}
+
+	.hero-content h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+		font-weight: 700;
+		text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+
+	.hero-subtitle {
+		font-size: 1.2rem;
+		margin-bottom: 2rem;
+		opacity: 0.95;
+		max-width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+		line-height: 1.6;
+	}
+
+	.hero-cta {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.btn-primary {
+		background: white;
+		color: #FF7A59;
+		padding: 0.75rem 1.5rem;
+		border-radius: 25px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: transform 0.2s ease;
+		box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+	}
+
+	.btn-secondary {
+		background: transparent;
+		color: white;
+		padding: 0.75rem 1.5rem;
+		border: 2px solid white;
+		border-radius: 25px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: all 0.2s ease;
+	}
+
+	.btn-secondary:hover {
+		background: white;
+		color: #FF7A59;
+		transform: translateY(-2px);
+	}
+
+	/* Content Container */
+	.content-container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
+	/* Content Sections */
+	.featured-destinations,
+	.latest-content,
+	.trust-section {
+		padding: 3rem 0;
+		width: 100%;
+	}
+
+	.newsletter {
+		padding: 3rem 1rem;
+		margin: 2rem 0;
+		width: 100%;
+	}
+
+	.featured-destinations h2,
+	.latest-content h2,
+	.trust-section h2,
+	.newsletter h2 {
+		text-align: center;
+		margin-bottom: 2rem;
+		font-size: 2rem;
+		color: #333;
+	}
+
+	/* Destination Grid */
+	.destination-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+		margin-bottom: 2rem;
+		width: 100%;
+	}
+
+	.destination-card {
+		background: white;
+		padding: 2rem;
+		border-radius: 12px;
+		box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+		transition: transform 0.2s ease;
+		border: 1px solid #f0f0f0;
+	}
+
+	.destination-card:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+	}
+
+	.destination-card h3 {
+		color: #FF7A59;
+		margin-bottom: 1rem;
+		font-size: 1.3rem;
+	}
+
+	.destination-card p {
+		color: #666;
+		margin-bottom: 1rem;
+		line-height: 1.6;
+	}
+
+	.destination-card a {
+		color: #4ECDC4;
+		text-decoration: none;
+		font-weight: 600;
+		transition: color 0.2s ease;
+	}
+
+	.destination-card a:hover {
+		color: #FF6B9D;
+	}
+
+	/* Content Grid */
+	.content-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+		margin-bottom: 2rem;
+		width: 100%;
+	}
+
+	.content-card {
+		background: white;
+		padding: 1.5rem;
+		border-radius: 12px;
+		box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+		border-left: 4px solid #4ECDC4;
+	}
+
+	.content-card h3 a {
+		color: #333;
+		text-decoration: none;
+		font-size: 1.2rem;
+	}
+
+	.content-card h3 a:hover {
+		color: #FF7A59;
+	}
+
+	.content-date {
+		color: #999;
+		font-size: 0.9rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.read-more {
+		color: #4ECDC4;
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.read-more:hover {
+		color: #FF6B9D;
+	}
+
+	.view-all {
+		text-align: center;
+	}
+
+	/* Trust Section */
+	.trust-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 2rem;
+		width: 100%;
+	}
+
+	.trust-item {
+		text-align: center;
+		padding: 1.5rem;
+	}
+
+	.trust-item h3 {
+		color: #FF7A59;
+		margin-bottom: 1rem;
+		font-size: 1.2rem;
+	}
+
+	.trust-item p {
+		color: #666;
+		line-height: 1.6;
+	}
+
+	/* Newsletter */
+	.newsletter {
+		background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+		color: white;
+		text-align: center;
+		border-radius: 20px;
+		margin: 2rem 1rem;
+	}
+
+	.newsletter h2 {
+		color: white;
+		margin-bottom: 1rem;
+	}
+
+	.newsletter p {
+		opacity: 0.9;
+		margin-bottom: 2rem;
+	}
+
+	.newsletter-form {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+		max-width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.newsletter-form input {
+		flex: 1;
+		min-width: 250px;
+		padding: 0.75rem 1rem;
+		border: none;
+		border-radius: 25px;
+		font-size: 1rem;
+	}
+
+	.newsletter-form button {
+		background: #FF7A59;
+		color: white;
+		border: none;
+		padding: 0.75rem 1.5rem;
+		border-radius: 25px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+
+	.newsletter-form button:hover {
+		background: #FF6B9D;
+	}
+
+	.newsletter-note {
+		font-size: 0.9rem;
+		opacity: 0.8;
+		margin-bottom: 0;
+	}
+
+	/* Responsive Design */
+	@media (max-width: 768px) {
+		.hero-content h1 {
+			font-size: 2rem;
+		}
+
+		.hero-subtitle {
+			font-size: 1.1rem;
+		}
+
+		.hero-cta {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.btn-primary,
+		.btn-secondary {
+			width: 200px;
+		}
+
+		.newsletter-form {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.newsletter-form input {
+			min-width: auto;
+			width: 100%;
+			max-width: 300px;
+		}
+	}
+
+	/* Main content spacing - Override global styles for homepage */
+	main {
+		padding: 0 !important;
+		margin: 0 !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		overflow-x: hidden;
+	}
+
+	main section:not(.hero) {
+		margin: 0;
+		width: 100%;
+	}
+</style>
